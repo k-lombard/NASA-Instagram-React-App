@@ -8,13 +8,15 @@ import { PURGE } from 'redux-persist';
 import { initialState } from "./store";
 import { SET_COPY_IMAGES } from "./NASAIg-types";
 import { SET_COPY_LIKES } from "./NASAIg-types";
+import { SET_LIKE_DICT } from "./NASAIg-types";
 
 export const initialIGState: IGState = {
     currentImages: [],
     likes: [],
     loading: false,
     copyImages: [],
-    copyLikes: []
+    copyLikes: [],
+    likeDict: new Map<String, number>()
 }
 
 export function NASAIgReducer (
@@ -46,6 +48,11 @@ export function NASAIgReducer (
             return {
                 ...state,
                 copyLikes: action.copyLikes
+            }
+        case SET_LIKE_DICT:
+            return {
+                ...state,
+                likeDict: action.likeDict
             }
         case PURGE:
             return initialIGState;

@@ -12,6 +12,8 @@ import { SetCopyImagesAction } from './NASAIg-types'
 import { SET_COPY_IMAGES } from './NASAIg-types'
 import { SET_COPY_LIKES } from './NASAIg-types'
 import { SetCopyLikesAction } from './NASAIg-types'
+import { SetLikeDictAction } from './NASAIg-types'
+import { SET_LIKE_DICT } from './NASAIg-types'
 
 export function getAPODRange(startDate: Date, endDate: Date): ThunkAction<Promise<any>, {}, {}, AnyAction> {
     return async (): Promise<any> => {
@@ -70,6 +72,13 @@ export function setCopyLikes (copyLikes: number[]): SetCopyLikesAction {
     return {
         type: SET_COPY_LIKES,
         copyLikes
+    }
+}
+
+export function setLikeDict (likeDict: any): SetLikeDictAction {
+    return {
+        type: SET_LIKE_DICT,
+        likeDict
     }
 }
 

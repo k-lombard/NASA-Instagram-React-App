@@ -5,6 +5,7 @@ export interface IGState {
     loading: boolean;
     copyImages: any[];
     copyLikes: number[];
+    likeDict: any;
 }
 
 export const SET_CURRENT_IMAGES = 'SET_CURRENT_IMAGES'
@@ -12,6 +13,7 @@ export const SET_LIKES = 'SET_LIKES'
 export const SET_LOADING = 'SET_LOADING'
 export const SET_COPY_IMAGES = 'SET_COPY_IMAGES'
 export const SET_COPY_LIKES = 'SET_COPY_LIKES'
+export const SET_LIKE_DICT = 'LIKE_DICT'
 
 export interface SetCurrentImagesAction {
     type: typeof SET_CURRENT_IMAGES;
@@ -42,6 +44,12 @@ export interface SetCopyLikesAction {
     copyLikes: number[];
 }
 
+export interface SetLikeDictAction {
+    type: typeof SET_LIKE_DICT;
+    likeDict: any;
+}
 
 
-export type NASAIgActionTypes = SetCurrentImagesAction | SetLikesAction | SetLoadingAction | PurgeAction | SetCopyImagesAction | SetCopyLikesAction
+export type NASAIgActionTypes = SetCurrentImagesAction | SetLikesAction | 
+SetLoadingAction | PurgeAction | SetCopyImagesAction | SetCopyLikesAction
+| SetLikeDictAction

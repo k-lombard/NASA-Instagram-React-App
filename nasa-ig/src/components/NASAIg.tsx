@@ -18,6 +18,7 @@ import { MaterialUiPickersDate } from '@material-ui/pickers/typings/date'
 import { setCopyImages } from '../store/NASAIg-actions'
 import { SET_COPY_LIKES } from '../store/NASAIg-types'
 import { setCopyLikes } from '../store/NASAIg-actions'
+import { setLikeDict } from '../store/NASAIg-actions'
 
 export default function NASAIg(this: any) {
   const [selectedDate, setSelectedDate] = useState(new Date())
@@ -31,23 +32,21 @@ export default function NASAIg(this: any) {
   const likes = useSelector((state: RootState) => state.NASAIg.likes)
   const copyImages = useSelector((state: RootState) => state.NASAIg.copyImages)
   const copyLikes = useSelector((state: RootState) => state.NASAIg.copyLikes)
+  const likeDict = useSelector((state: RootState) => state.NASAIg.likeDict)
   function useForceUpdate(){
     const [value, setValue] = useState(0); // integer state
     return () => setValue(value => value + 1); // update the state to force render
   }
 
-  const handleLike = (evt: React.MouseEvent, idx: number) => {
+  const handleLike = (evt: React.MouseEvent, idx: number, title: String) => {
     if (likes[idx] === 0) {
       likes[idx] = 1
-      console.log(likes)
       dispatch(setLikes(likes))
     } else if (likes[idx] === 1) {
       likes[idx] = 0
-      console.log(likes)
       dispatch(setLikes(likes))
     } else {
       likes[idx] = 1
-      console.log(likes)
       dispatch(setLikes(likes))
     }
     forceUpdate()
@@ -56,6 +55,7 @@ export default function NASAIg(this: any) {
   const filterImages = (evt: React.MouseEvent) => {
     dispatch(setCopyImages(currentImages))
     dispatch(setCopyLikes(likes))
+    let temp1 = likes
     const temp3 = currentImages.filter((element: any, idx: number) => {
       const check = new Date(element.date)
       const to = new Date(selectedDateEnd)
@@ -63,14 +63,12 @@ export default function NASAIg(this: any) {
       if((check.getTime() <= to.getTime() && check.getTime() >= from.getTime())) {
         return true
       } else {
-        const temp4 = likes.slice(0, idx)
-        temp4.concat(likes.slice(idx+1, likes.length))
-        dispatch(setLikes(temp4))
+        temp1 = temp1.slice(0,idx).concat(temp1.slice(idx+1,temp1.length))
         return false
       }
     })
+    dispatch(setLikes(temp1))
     dispatch(setCurrentImages(temp3))
-    console.log(likes)
     forceUpdate()
   }
   const resetFilter = (evt: React.MouseEvent) => {
@@ -90,24 +88,26 @@ export default function NASAIg(this: any) {
   }
 
   useEffect(() => {
-    setButtonDisplay(false)
-    dispatch(setLoading(true))
-    dispatch(getAPODDefault()).then(res => {
-      dispatch(setLoading(false))
-      dispatch(setCurrentImages(res))
-      dispatch(setCopyImages(currentImages))
-      console.log(currentImages)
-      const temp = new Array<number>()
-      currentImages.forEach((element: any) => {
-        temp.push(0)
+    if (currentImages.length === 0) {
+      setButtonDisplay(false)
+      dispatch(setLoading(true))
+      dispatch(getAPODDefault()).then(res => {
+        dispatch(setLoading(false))
+        dispatch(setCurrentImages(res))
+        dispatch(setCopyImages(currentImages))
+        const temp = new Array<number>()
+        const temp2 = new Map<String, number>()
+        currentImages.forEach((element: any) => {
+          temp.push(0)
+          temp2.set(element.title, 0)
+        })
+        dispatch(setLikes(temp))
+        dispatch(setLikeDict(temp2))
+        forceUpdate()
+      }).catch(err => {
+        console.log(err)
       })
-      dispatch(setLikes(temp))
-      console.log(temp)
-      console.log(likes)
-      forceUpdate()
-    }).catch(err => {
-      console.log(err)
-    })
+    }
   }, [])
 
   return (
@@ -164,7 +164,7 @@ export default function NASAIg(this: any) {
         position: 'relative', left: '50%',
         transform: 'translate(-50%, 0%)'
       }}>
-          <IconButton onClick={(evt) => handleLike(evt, idx)}>
+          <IconButton onClick={(evt) => handleLike(evt, idx, img.title)}>
                 <FavoriteIcon/>
                 {likes[idx]}
               </IconButton>
