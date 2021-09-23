@@ -79,6 +79,7 @@ export default function NASAIg(this: any) {
 
   const purgeStore = (evt: React.MouseEvent) => { 
     evt.preventDefault();
+    dispatch(setCurrentImages([]))
     dispatch({ 
         type: PURGE,
         key: "root",    // Whatever you chose for the "key" value when initialising redux-persist in the **persistCombineReducers** method - e.g. "root"
@@ -108,7 +109,7 @@ export default function NASAIg(this: any) {
         console.log(err)
       })
     }
-  }, [])
+  }, [currentImages, setCurrentImages])
 
   return (
     <div>
